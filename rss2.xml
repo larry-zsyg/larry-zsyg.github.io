@@ -9,8 +9,28 @@
     <atom:link href="https://larry-zsyg.github.io/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description>终身学习，向死而生</description>
-    <pubDate>Fri, 28 May 2021 12:40:27 GMT</pubDate>
+    <pubDate>Fri, 28 May 2021 13:33:46 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>堆空间</title>
+      <link>https://larry-zsyg.github.io/2021/05/28/%E5%A0%86%E7%A9%BA%E9%97%B4/</link>
+      <guid>https://larry-zsyg.github.io/2021/05/28/%E5%A0%86%E7%A9%BA%E9%97%B4/</guid>
+      <pubDate>Fri, 28 May 2021 13:26:06 GMT</pubDate>
+      
+      <description>&lt;h2 id=&quot;堆空间&quot;&gt;&lt;a href=&quot;#堆空间&quot; class=&quot;headerlink&quot; title=&quot;堆空间&quot;&gt;&lt;/a&gt;堆空间&lt;/h2&gt;&lt;p&gt;很多人使用了好久都不明白堆的概念，现在让我们来探究堆的本质含义。&lt;/p&gt;
+&lt;p&gt;&lt;escape&gt;</description>
+      
+      
+      
+      <content:encoded><![CDATA[<h2 id="堆空间"><a href="#堆空间" class="headerlink" title="堆空间"></a>堆空间</h2><p>很多人使用了好久都不明白堆的概念，现在让我们来探究堆的本质含义。</p><p><escape><span id="more"></span></escape></p><h3 id="堆的概念"><a href="#堆的概念" class="headerlink" title="堆的概念"></a>堆的概念</h3><p>堆事我想试试这个</p><p>图片如下：</p><p><img src="%E5%A0%86%E7%A9%BA%E9%97%B4.assets/%E6%8D%95%E8%8E%B7.PNG"></p>]]></content:encoded>
+      
+      
+      
+      
+      <comments>https://larry-zsyg.github.io/2021/05/28/%E5%A0%86%E7%A9%BA%E9%97%B4/#disqus_thread</comments>
+      
+    </item>
     
     <item>
       <title>Hello World</title>
