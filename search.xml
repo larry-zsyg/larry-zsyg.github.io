@@ -27,6 +27,214 @@
       </tags>
   </entry>
   <entry>
+    <title>gdb调试基本操作</title>
+    <url>/2021/08/22/GDB%E8%B0%83%E8%AF%95%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>近来熟悉新工作C++业务代码、框架之类的内容，为了快速验证自己的理解是否到位，一直在用gdb打断点的方式来阅读源代码。由于gdb这方面的边边角角的东西很碎，偶尔忘记了总是要去百度，所以整理在这里方便日后查阅。（不停更新ing）</p>
+<span id="more"></span>
+
+<h3 id="gdb基本命令介绍"><a href="#gdb基本命令介绍" class="headerlink" title="gdb基本命令介绍"></a>gdb基本命令介绍</h3><h4 id="启动gdb"><a href="#启动gdb" class="headerlink" title="启动gdb"></a>启动gdb</h4><p>对于C/C++程序的调试，需要编译的时候在前面加-g选项：</p>
+<blockquote>
+<p>$g++ -g  main.cpp -o main</p>
+</blockquote>
+<p>之后gdb进入调试界面就OK:</p>
+<blockquote>
+<p>$gdb ./main</p>
+</blockquote>
+<p>当然，有时候我们需要的调试的时候core文件，操作同上。不过，大多数时候服务器的默认core文件生成的size大小为0，需要我们设置core文件大小，这样在发生coredump的时候才会在当前文件夹生成一个core文件，设置core文件大小的命令如下：</p>
+<blockquote>
+<p>$ulimit -c         //来查看core file size的大小</p>
+<p>$ulimit -a         //或者查看所有配置</p>
+<p>$ulimit -c unlimited     //指定core file size 为unlimited</p>
+</blockquote>
+<p>还有一个比较重要的命令，比如一个服务进程已经启动，而你想调试这个进程，需要用到attach Pid来启动：</p>
+<blockquote>
+<p>$gdb attach <pid></p>
+</blockquote>
+<h4 id="交互式gdb命令"><a href="#交互式gdb命令" class="headerlink" title="交互式gdb命令"></a>交互式gdb命令</h4><h5 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h5><table>
+<thead>
+<tr>
+<th align="center">命令/简写</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">run/r</td>
+<td align="center">运行程序，遇到断点后会停止到断点处，等待用户输入下一步命令</td>
+</tr>
+<tr>
+<td align="center">continue/c</td>
+<td align="center">继续运行到下一个断点处</td>
+</tr>
+<tr>
+<td align="center">next/n</td>
+<td align="center">单步调试，遇到函数不会进入到函数内部</td>
+</tr>
+<tr>
+<td align="center">step/s</td>
+<td align="center">单步调试，跟next的区别是，如果是函数入口，会进入到函数内部</td>
+</tr>
+<tr>
+<td align="center">until</td>
+<td align="center">该命令可以在一个运行程序退出循环体，防止在一个循环体内不停单步</td>
+</tr>
+<tr>
+<td align="center">until+行号</td>
+<td align="center">运行到某行，不仅仅是为了跳出循环，作用等同于打好断点之后continue</td>
+</tr>
+<tr>
+<td align="center">finish</td>
+<td align="center">运行程序直到当前函数完成返回，并打印函数返回时的堆栈地址和返回值及参数值等信息</td>
+</tr>
+<tr>
+<td align="center">call</td>
+<td align="center">调用程序中可见的函数，并传递“参数”，如：call  gdb_test(55)</td>
+</tr>
+<tr>
+<td align="center">quit/q</td>
+<td align="center">退出gdb</td>
+</tr>
+</tbody></table>
+<h5 id="断点设置"><a href="#断点设置" class="headerlink" title="断点设置"></a>断点设置</h5><table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">break n(break可以简写b，n代表行号)</td>
+<td align="center">在第n行设置断点，如果没有运行到该文件，需要b 加文件名：行号，如(b test.cpp:10)</td>
+</tr>
+<tr>
+<td align="center">b fn if a &gt; b</td>
+<td align="center">条件断点设置</td>
+</tr>
+<tr>
+<td align="center">break func</td>
+<td align="center">在函数入口处设置断点</td>
+</tr>
+<tr>
+<td align="center">info b</td>
+<td align="center">查看当前程序的断点设置情况</td>
+</tr>
+<tr>
+<td align="center">delete n</td>
+<td align="center">删除第n个断点</td>
+</tr>
+<tr>
+<td align="center">disable n</td>
+<td align="center">暂停第n个断点</td>
+</tr>
+<tr>
+<td align="center">enable</td>
+<td align="center">开启第n个断点</td>
+</tr>
+<tr>
+<td align="center">clear n</td>
+<td align="center">清除第n行的断点</td>
+</tr>
+<tr>
+<td align="center">delete breakpoints</td>
+<td align="center">清除所有断点</td>
+</tr>
+</tbody></table>
+<h5 id="查看源代码"><a href="#查看源代码" class="headerlink" title="查看源代码"></a>查看源代码</h5><table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">list（简写为l）</td>
+<td align="center">显示源代码，默认10行</td>
+</tr>
+<tr>
+<td align="center">list n</td>
+<td align="center">显示以第n行为中心的上下一共10行代码</td>
+</tr>
+<tr>
+<td align="center">list func</td>
+<td align="center">显示func函数的源代码</td>
+</tr>
+<tr>
+<td align="center">list</td>
+<td align="center">接着上次的显示10行代码</td>
+</tr>
+</tbody></table>
+<h5 id="打印变量"><a href="#打印变量" class="headerlink" title="打印变量"></a>打印变量</h5><table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">print(简写p) str</td>
+<td align="center">p后面加想打印的内容</td>
+</tr>
+<tr>
+<td align="center">print func(a)</td>
+<td align="center">打印以a为参数的调用func函数</td>
+</tr>
+<tr>
+<td align="center">display 表达式</td>
+<td align="center">单步运行的时候，每次都会把表达式打印出来</td>
+</tr>
+<tr>
+<td align="center">watch 表达式</td>
+<td align="center">设置监视点，当监视点值发生改变的时候，gdb停止调试</td>
+</tr>
+<tr>
+<td align="center">whatis</td>
+<td align="center">查询变量或者函数</td>
+</tr>
+<tr>
+<td align="center">info function</td>
+<td align="center">查询函数</td>
+</tr>
+</tbody></table>
+<h5 id="查询堆栈信息"><a href="#查询堆栈信息" class="headerlink" title="查询堆栈信息"></a>查询堆栈信息</h5><table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">where/bt</td>
+<td align="center">输出当前运行堆栈列表</td>
+</tr>
+<tr>
+<td align="center">bt backtrace</td>
+<td align="center">显示当前调用的堆栈</td>
+</tr>
+<tr>
+<td align="center">up/down</td>
+<td align="center">改变堆栈显示深度</td>
+</tr>
+<tr>
+<td align="center">set args</td>
+<td align="center">指定运行时的参数</td>
+</tr>
+<tr>
+<td align="center">show args</td>
+<td align="center">查看设置好的参数</td>
+</tr>
+<tr>
+<td align="center">info program</td>
+<td align="center">查看程序是否正在运行，进程号以及暂停原因</td>
+</tr>
+</tbody></table>
+<h3 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h3>]]></content>
+      <categories>
+        <category>gdb调试</category>
+      </categories>
+      <tags>
+        <tag>gdb</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>堆空间</title>
     <url>/2021/05/28/%E5%A0%86%E7%A9%BA%E9%97%B4/</url>
     <content><![CDATA[<h2 id="堆空间"><a href="#堆空间" class="headerlink" title="堆空间"></a>堆空间</h2><p>很多人使用了好久都不明白堆的概念，现在让我们来探究堆的本质含义。</p>
